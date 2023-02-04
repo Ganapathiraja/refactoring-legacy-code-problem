@@ -12,8 +12,6 @@ public class CustomerTest {
 
         assertEquals(expected, 1 + 2);
     }
-
-
     @Test
     public void happyPathCustomerWithAllFurnitureTypes()
     {
