@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Customer {
     private String name;
-    private List<Rental> rentals = new ArrayList<Rental>();
+    private Rentals rentals = new Rentals();
 
     public Customer(String name) {
         this.name = name;
@@ -21,21 +21,25 @@ public class Customer {
         return name;
     }
 
-    public String statement() {
-        double totalAmount = 0;
-        int totalFrequentRenterPoints = 0;
+    public String statement()
+    {
+
         String result = getRentalRecordName();
 
+        int totalFrequentRenterPoints = rentals.getTotalFrequentRenterPoints();
+
         for (Rental rental : rentals) {
-            double amount = rental.amount();
-            totalFrequentRenterPoints += rental.frequentRenterPoints();
-            result += CustomerResultUtils.getCurrentAmount(rental, amount);
-            totalAmount += amount;
+            result += CustomerResultUtils.getCurrentAmount(rental, rental.amount());
         }
+
+        double totalAmount = rentals.getTotalAmount();
+
+
         result += CustomerResultUtils.getAmountOwned(totalAmount);
         result += CustomerResultUtils.getFrequentRenterPoints(totalFrequentRenterPoints);
         return result;
     }
+
 
     // Creates a full statement for customers
     private String getRentalRecordName() {
@@ -47,18 +51,16 @@ public class Customer {
         StringBuilder result = new StringBuilder();
         result.append("<h1>").append(getRentalRecordName()).append("</h1>");
 
-        double totalAmount = 0;
-        int frequentRenterPoints = 0;
+        int totalFrequentRenterPoints = rentals.getTotalFrequentRenterPoints();
         for (Rental rental : rentals) {
-            double amount = rental.amount();
-            frequentRenterPoints += rental.frequentRenterPoints();
             //show figures for this rental
-            result.append("<div>").append(CustomerResultUtils.getCurrentAmount(rental, amount)).append("</div>");
-            totalAmount += amount;
+            result.append("<div>").append(CustomerResultUtils.getCurrentAmount(rental, rental.amount())).append("</div>");
         }
 
+        double totalAmount = rentals.getTotalAmount();
+
         result.append("<b>").append(CustomerResultUtils.getAmountOwned(totalAmount)).append("</b>");
-        result.append("<b>").append(CustomerResultUtils.getFrequentRenterPoints(frequentRenterPoints)).append("</b>");
+        result.append("<b>").append(CustomerResultUtils.getFrequentRenterPoints(totalFrequentRenterPoints)).append("</b>");
         return result.toString();
     }
 
