@@ -3,8 +3,6 @@ package com.thoughtworks.furniturerental;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.thoughtworks.furniturerental.Furniture.*;
-
 public class Customer {
     private String name;
     private List<Rental> rentals = new ArrayList<Rental>();
@@ -21,50 +19,96 @@ public class Customer {
         return name;
     }
 
-    public String statement() {
+    public String statement()
+    {
         double totalAmount = 0;
-        int frequentRenterPoints = 0;
-        String result = "Rental Record for " + getName() + "\n";
-        for (Rental rental : rentals) {
-            double amount = amountFor(rental);
-            // add frequent renter points
-            frequentRenterPoints++;
-            // add bonus for a two days new launch rental
-            if ((rental.getFurniture().getPriceCode() == NEW_LAUNCH)
-                    &&
-                    rental.getDaysRented() > 1) frequentRenterPoints++;
+        int totalFrequentRenterPoints = 0;
+        String result = getRentalRecordName();
 
+        for (Rental rental : rentals)
+        {
+            double amount = amountForRental(rental);
+            totalFrequentRenterPoints += frequentRenterPoints(rental);
             //show figures for this rental
-            result += "\t" + rental.getFurniture().getTitle() + "\t" +
-                    amount + "\n";
+            result += getCurrentAmount(rental, amount);
             totalAmount += amount;
         }
 
-        //add footer lines result
-        result += "Amount owed is " + totalAmount + "\n";
-        result += "You earned " + frequentRenterPoints
-                + " frequent renter points";
+        result += getAmountOwned(totalAmount);
+        result += getFrequentRenterPoints(totalFrequentRenterPoints);
         return result;
     }
 
-    private double amountFor(Rental rental) {
-        double amount = 0;
+    double amountForRental(Rental rental)
+    {
+        double thisAmount = 0;
         switch (rental.getFurniture().getPriceCode()) {
-            case REGULAR:
-                amount += 200;
+            case Furniture.REGULAR:
+                thisAmount += 200;
                 if (rental.getDaysRented() > 2)
-                    amount += (rental.getDaysRented() - 2) * 150;
+                    thisAmount += (rental.getDaysRented() - 2) * 150;
                 break;
-            case NEW_LAUNCH:
-                amount += rental.getDaysRented() * 300;
+            case Furniture.NEW_LAUNCH:
+                thisAmount += rental.getDaysRented() * 300;
                 break;
-            case CHILDREN:
-                amount += 150;
+            case Furniture.CHILDREN:
+                thisAmount += 150;
                 if (rental.getDaysRented() > 3)
-                    amount += (rental.getDaysRented() - 3) * 150;
+                    thisAmount += (rental.getDaysRented() - 3) * 150;
                 break;
         }
-        return amount;
+        return thisAmount;
     }
+    int frequentRenterPoints(Rental rental)
+    {
+        int frequentRenterPoints = 1;
+        // add frequent renter points
+        // add bonus for a two days new launch rental
+        if ((rental.getFurniture().getPriceCode() == Furniture.NEW_LAUNCH) && rental.getDaysRented() > 1) {
+            frequentRenterPoints++;
+        }
+        return frequentRenterPoints;
+    }
+
+    // Creates a full statement for customers
+    private String getRentalRecordName() {
+        return "Rental Record for " + getName() + "\n";
+    }
+    private static String getCurrentAmount( Rental each, double thisAmount) {
+        return "\t" + each.getFurniture().getTitle() + "\t" +
+                thisAmount + "\n";
+    }
+    private static String getAmountOwned(double totalAmount) {
+        return "Amount owed is " + totalAmount + "\n";
+
+    }
+    private static String getFrequentRenterPoints(int frequentRenterPoints) {
+        return  "You earned " + frequentRenterPoints
+                + " frequent renter points";
+    }
+
+
+    public String htmlStatement()
+    {
+
+        double totalAmount = 0;
+        int frequentRenterPoints = 0;
+        StringBuilder result = new StringBuilder();
+        result.append("<h1>").append(getRentalRecordName()).append("</h1>");
+
+        for (Rental rental : rentals)
+        {
+            double amount = amountForRental(rental);
+            frequentRenterPoints += frequentRenterPoints(rental);
+            //show figures for this rental
+            result.append("<div>").append(getCurrentAmount(rental, amount)).append("</div>");
+            totalAmount += amount;
+        }
+
+        result.append("<b>").append(getAmountOwned(totalAmount)).append("</b>");
+        result.append("<b>").append(getFrequentRenterPoints(frequentRenterPoints)).append("</b>");
+        return result.toString();
+    }
+
 }
 
