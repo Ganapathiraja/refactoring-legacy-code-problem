@@ -28,7 +28,7 @@ public class CustomerTest {
         customer.addRental(tableRental);
         customer.addRental(sofaRental);
 
-        String statement = customer.statement();
+        String statement = customer.textStatement();
         System.out.println(statement);
 
         assertEquals("Rental Record for Ganapathi\n" +

@@ -8,13 +8,13 @@ and then introduce refactoring techniques to remove the code smells.
 
 As a customer  
 
-I would like to view HTML statement  
+I would like to view HTML textStatement  
 
 So that I can view it in my browser  
 
 
 ## Expected Format:
-HTML statement should be humanly readable(new lines at the end of each line)  
+HTML textStatement should be humanly readable(new lines at the end of each line)  
 
 Headline should be in H1  
 

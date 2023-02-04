@@ -1,9 +1,7 @@
 package com.thoughtworks.furniturerental;
 
-import com.thoughtworks.furniturerental.util.CustomerResultUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.thoughtworks.furniturerental.statements.HtmlStatement;
+import com.thoughtworks.furniturerental.statements.TextStatement;
 
 public class Customer {
     private String name;
@@ -21,48 +19,20 @@ public class Customer {
         return name;
     }
 
-    public String statement()
+    public String textStatement()
     {
+        TextStatement textStatement = new TextStatement(getName(),rentals);
+       return textStatement.statement();
+    }
 
-        String result = getRentalRecordName();
-
-        int totalFrequentRenterPoints = rentals.getTotalFrequentRenterPoints();
-
-        for (Rental rental : rentals) {
-            result += CustomerResultUtils.getCurrentAmount(rental, rental.amount());
-        }
-
-        double totalAmount = rentals.getTotalAmount();
-
-
-        result += CustomerResultUtils.getAmountOwned(totalAmount);
-        result += CustomerResultUtils.getFrequentRenterPoints(totalFrequentRenterPoints);
-        return result;
+    public String htmlStatement()
+    {
+        HtmlStatement htmlStatement = new HtmlStatement(getName(),rentals);
+        return htmlStatement.statement();
     }
 
 
     // Creates a full statement for customers
-    private String getRentalRecordName() {
-        return "Rental Record for " + getName() + "\n";
-    }
-
-    public String htmlStatement() {
-
-        StringBuilder result = new StringBuilder();
-        result.append("<h1>").append(getRentalRecordName()).append("</h1>");
-
-        int totalFrequentRenterPoints = rentals.getTotalFrequentRenterPoints();
-        for (Rental rental : rentals) {
-            //show figures for this rental
-            result.append("<div>").append(CustomerResultUtils.getCurrentAmount(rental, rental.amount())).append("</div>");
-        }
-
-        double totalAmount = rentals.getTotalAmount();
-
-        result.append("<b>").append(CustomerResultUtils.getAmountOwned(totalAmount)).append("</b>");
-        result.append("<b>").append(CustomerResultUtils.getFrequentRenterPoints(totalFrequentRenterPoints)).append("</b>");
-        return result.toString();
-    }
 
 }
 
